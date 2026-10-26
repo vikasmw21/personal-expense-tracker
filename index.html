@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpendWise — Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="authView" class="auth-layout">
+    <section class="auth-visual">
+      <div class="brand"><span class="brand-mark">S</span><span>SpendWise</span></div>
+      <div class="visual-copy">
+        <span class="eyebrow">PERSONAL FINANCE, SIMPLIFIED</span>
+        <h1>Make every<br><em>rupee count.</em></h1>
+        <p>A calmer, clearer way to track your daily spending and build better money habits.</p>
+        <div class="mini-stats">
+          <div><strong>01</strong><span>Track spending</span></div>
+          <div><strong>02</strong><span>Build awareness</span></div>
+          <div><strong>03</strong><span>Stay in control</span></div>
+        </div>
+      </div>
+      <div class="auth-orb orb-one"></div><div class="auth-orb orb-two"></div>
+      <p class="visual-foot">A student project · Full Stack Development Lab</p>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="mobile-brand brand"><span class="brand-mark">S</span><span>SpendWise</span></div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth="login">Student sign in</button>
+          <button class="auth-tab" data-auth="register">Student registration</button>
+        </div>
+        <div id="loginFormWrap">
+          <h2>Welcome back</h2><p class="muted">Use your NITW student email to continue to your expense tracker.</p>
+          <form id="loginForm" class="form-stack">
+            <label>NITW student email<input id="loginEmail" type="email" placeholder="xyz@student.nitw.ac.in" pattern="^[A-Za-z0-9._%+-]+@student\.nitw\.ac\.in$" title="Use your NITW student email, e.g. xyz@student.nitw.ac.in" required /></label>
+            <label>Password<input id="loginPassword" type="password" placeholder="Enter your password" minlength="6" required /></label>
+            <button class="btn btn-primary full" type="submit">Sign in <span>→</span></button>
+          </form>
+          <p class="form-note">Demo data stays in this browser using local storage.</p>
+        </div>
+        <div id="registerFormWrap" class="hidden">
+          <h2>Create your account</h2><p class="muted">Create an account using your NITW student email.</p>
+          <form id="registerForm" class="form-stack">
+            <label>Full name<input id="registerName" type="text" placeholder="Your name" minlength="2" required /></label>
+            <label>NITW student email<input id="registerEmail" type="email" placeholder="xyz@student.nitw.ac.in" pattern="^[A-Za-z0-9._%+-]+@student\.nitw\.ac\.in$" title="Use your NITW student email, e.g. xyz@student.nitw.ac.in" required /></label>
+            <label>Password<input id="registerPassword" type="password" placeholder="At least 6 characters" minlength="6" required /></label>
+            <label>Confirm password<input id="registerConfirm" type="password" placeholder="Repeat your password" minlength="6" required /></label>
+            <button class="btn btn-primary full" type="submit">Create account <span>→</span></button>
+          </form>
+        </div>
+        <div id="verifyEmailWrap" class="hidden verify-card">
+          <h2>Verify your student email</h2>
+          <p class="muted">Enter the 6-digit demo verification code to finish registration.</p>
+          <div id="demoCodeNotice" class="demo-code-notice" role="status"></div>
+          <form id="verifyEmailForm" class="form-stack">
+            <label>Verification code<input id="verificationCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="123456" required /></label>
+            <button class="btn btn-primary full" type="submit">Verify and create account <span>→</span></button>
+            <button class="btn btn-ghost full" type="button" id="resendVerificationBtn">Generate new demo code</button>
+            <button class="btn btn-ghost full" type="button" id="cancelVerificationBtn">Cancel</button>
+          </form>
+          <p class="form-note">Prototype mode: the code is shown here, not emailed. Real email delivery requires the backend/email service planned for the final stage.</p>
+        </div>
+        <div id="authMessage" class="message" role="status"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">S</span><span>SpendWise</span></div>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav-menu">
+        <button class="nav-item active" data-page="overview"><span class="nav-icon">◫</span> Overview <span class="nav-dot"></span></button>
+        <button class="nav-item" data-page="expenses"><span class="nav-icon">↗</span> Expenses</button>
+        <button class="nav-item" data-page="income"><span class="nav-icon">＋</span> Income <span class="soon">M3</span></button>
+        <button class="nav-item" data-page="budgets"><span class="nav-icon">◎</span> Budgets <span class="soon">M4</span></button>
+        <button class="nav-item" data-page="transactions"><span class="nav-icon">▤</span> Transaction history</button>
+        <button class="nav-item" data-page="profile"><span class="nav-icon">♙</span> My profile</button>
+        <button class="nav-item" data-page="categories"><span class="nav-icon">▦</span> Categories <span class="soon">M3</span></button>
+        <button class="nav-item" data-page="reports"><span class="nav-icon">◷</span> Reports <span class="soon">M5</span></button>
+</nav>
+      <div class="sidebar-bottom">
+        <div class="tip-card"><span class="tip-icon">✦</span><strong>Small steps add up.</strong><p>Tracking today helps you make better decisions tomorrow.</p></div>
+        <button id="logoutBtn" class="logout-btn"><span>↪</span> Sign out</button>
+        <div class="user-mini"><div id="avatar" class="avatar">U</div><div class="user-mini-copy"><strong id="sidebarName">User</strong><span id="sidebarEmail">user@email.com</span></div><span class="more">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumbPage">Overview</strong></div>
+        <div class="top-actions"><span class="date-chip" id="todayLabel"></span><button id="themeBtn" class="icon-btn" title="Toggle appearance">◐</button><div class="top-avatar" id="topAvatar">U</div><button id="topLogoutBtn" class="btn btn-ghost top-logout" type="button">↪ Logout</button></div>
+      </header>
+
+      <section id="overviewPage" class="page">
+        <div class="page-heading">
+          <div><span class="eyebrow">YOUR FINANCIAL SNAPSHOT</span><h1 id="greeting">Good day 👋</h1><p class="muted">Here's what's happening with your expenses.</p></div>
+          <button class="btn btn-primary" id="quickAddBtn"><span>＋</span> Add expense</button>
+        </div>
+        <div class="summary-grid">
+          <article class="summary-card main-summary"><div class="summary-top"><span>Total expenses</span><span class="summary-symbol">↗</span></div><strong id="totalExpense">₹0.00</strong><div class="summary-bottom"><span class="status-dot"></span><span>All recorded expenses</span></div><div class="summary-watermark">₹</div></article>
+          <article class="summary-card"><div class="summary-top"><span>Transactions</span><span class="card-icon purple">▤</span></div><strong id="transactionCount">0</strong><div class="summary-bottom"><span class="subtle">Expense entries saved</span></div></article>
+          <article class="summary-card"><div class="summary-top"><span>Average expense</span><span class="card-icon orange">⌁</span></div><strong id="averageExpense">₹0.00</strong><div class="summary-bottom"><span class="subtle">Per transaction</span></div></article>
+        </div>
+        <div class="content-grid">
+          <section class="panel transactions-panel">
+            <div class="panel-heading"><div><h3>Recent expenses</h3><p class="muted">Your latest recorded transactions</p></div><button class="text-btn" id="viewAllBtn">View all <span>→</span></button></div>
+            <div id="recentTransactions" class="transaction-list"></div>
+            <div id="recentEmpty" class="empty-state hidden"><div class="empty-icon">＋</div><strong>No expenses yet</strong><p>Add your first expense to see it here.</p><button class="btn btn-primary" id="emptyAddBtn">Add first expense</button></div>
+          </section>
+          <section class="panel category-panel">
+            <div class="panel-heading"><div><h3>Spending by category</h3><p class="muted">Where your money goes</p></div><span class="small-pill">ALL TIME</span></div>
+            <div id="categoryBreakdown" class="category-breakdown"></div>
+            <div id="categoryEmpty" class="category-empty">Category insights will appear after you add expenses.</div>
+          </section>
+        </div>
+        <div class="module-note"><span>✓</span><div><strong>Modules 1 & 2 active</strong><p>User account management and expense management are implemented in this demo. Other modules are planned extensions.</p></div></div>
+      </section>
+
+      <section id="expensesPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">MODULE 2 · TRANSACTION MANAGEMENT</span><h1>Expenses</h1><p class="muted">Add, edit, organize and find your expense records.</p></div><button class="btn btn-primary" id="addExpenseBtn"><span>＋</span> Add expense</button></div>
+        <section class="panel filter-panel">
+          <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Search description or category..." /></div>
+          <select id="categoryFilter" aria-label="Filter by category"><option value="">All categories</option></select>
+          <select id="sortFilter" aria-label="Sort expenses"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="high">Amount: high to low</option><option value="low">Amount: low to high</option></select>
+        </section>
+        <section class="panel table-panel">
+          <div class="panel-heading"><div><h3>All expenses <span id="filteredCount" class="count-badge">0</span></h3><p class="muted">Your personal expense history</p></div><span class="small-pill">LOCAL DEMO</span></div>
+          <div class="table-wrap"><table><thead><tr><th>DESCRIPTION</th><th>CATEGORY</th><th>DATE</th><th class="align-right">AMOUNT</th><th class="align-right">ACTIONS</th></tr></thead><tbody id="expenseTableBody"></tbody></table></div>
+          <div id="tableEmpty" class="empty-state"><div class="empty-icon">⌕</div><strong>No matching expenses</strong><p>Try a different search or add a new expense.</p></div>
+        </section>
+      </section>
+
+
+      <section id="incomePage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">MODULE 3 · INCOME MANAGEMENT</span><h1>Income</h1><p class="muted">Record salary, allowances, freelance work and other money received.</p></div><button class="btn btn-primary" id="addIncomeBtn"><span>＋</span> Add income</button></div>
+        <div class="summary-grid">
+          <article class="summary-card main-summary"><div class="summary-top"><span>Total income</span><span class="summary-symbol">↗</span></div><strong id="totalIncome">₹0.00</strong><div class="summary-bottom"><span class="status-dot"></span><span>All recorded income</span></div><div class="summary-watermark">₹</div></article>
+          <article class="summary-card"><div class="summary-top"><span>Income entries</span><span class="card-icon purple">▤</span></div><strong id="incomeCount">0</strong><div class="summary-bottom"><span class="subtle">Income records saved</span></div></article>
+          <article class="summary-card"><div class="summary-top"><span>Average income</span><span class="card-icon orange">⌁</span></div><strong id="averageIncome">₹0.00</strong><div class="summary-bottom"><span class="subtle">Per income entry</span></div></article>
+        </div>
+        <section class="panel table-panel">
+          <div class="panel-heading"><div><h3>Income history <span id="incomeFilteredCount" class="count-badge">0</span></h3><p class="muted">Manage all the money you have received</p></div><div class="search-box income-search"><span>⌕</span><input id="incomeSearchInput" type="search" placeholder="Search source or category..." /></div></div>
+          <div class="table-wrap"><table><thead><tr><th>INCOME SOURCE</th><th>CATEGORY</th><th>DATE</th><th class="align-right">AMOUNT</th><th class="align-right">ACTIONS</th></tr></thead><tbody id="incomeTableBody"></tbody></table></div>
+          <div id="incomeEmpty" class="empty-state"><div class="empty-icon">＋</div><strong>No income recorded yet</strong><p>Add income such as pocket money, scholarship or salary.</p></div>
+        </section>
+      </section>
+
+      <section id="budgetsPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">MODULE 4 · BUDGET MANAGEMENT</span><h1>Budgets</h1><p class="muted">Set a monthly spending limit by category and monitor progress.</p></div><button class="btn btn-primary" id="addBudgetBtn"><span>＋</span> Set budget</button></div>
+        <div class="summary-grid">
+          <article class="summary-card main-summary"><div class="summary-top"><span>Total monthly budget</span><span class="summary-symbol">◎</span></div><strong id="budgetTotal">₹0.00</strong><div class="summary-bottom"><span class="status-dot"></span><span>Budgets for selected month</span></div><div class="summary-watermark">₹</div></article>
+          <article class="summary-card"><div class="summary-top"><span>Spent so far</span><span class="card-icon orange">↗</span></div><strong id="budgetSpent">₹0.00</strong><div class="summary-bottom"><span class="subtle">Matched expense records</span></div></article>
+          <article class="summary-card"><div class="summary-top"><span>Remaining budget</span><span class="card-icon purple">◷</span></div><strong id="budgetRemaining">₹0.00</strong><div class="summary-bottom"><span class="subtle">Budget minus spending</span></div></article>
+        </div>
+        <section class="panel budget-panel">
+          <div class="panel-heading"><div><h3>Monthly category budgets</h3><p class="muted">Progress is calculated from expenses in the selected month.</p></div><label class="month-picker">MONTH<input type="month" id="budgetMonth"></label></div>
+          <div id="budgetList" class="budget-list"></div>
+          <div id="budgetEmpty" class="empty-state"><div class="empty-icon">◎</div><strong>No budgets for this month</strong><p>Set a limit for a category to start tracking your spending.</p><button class="btn btn-primary" id="emptyBudgetBtn">Set first budget</button></div>
+        </section>
+        <div class="module-note"><span>!</span><div><strong>Budget status</strong><p>When spending reaches or exceeds a category's limit, the progress bar and status label highlight the budget. This local demo does not send notifications.</p></div></div>
+      </section>
+
+      <section id="transactionsPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">MODULE 6 · TRANSACTION HISTORY</span><h1>Transaction history</h1><p class="muted">A combined, searchable history of your expenses and income.</p></div><button class="btn btn-primary" id="exportTransactionsBtn">Export CSV ↓</button></div>
+        <section class="panel filter-panel history-filters">
+          <div class="search-box"><span>⌕</span><input id="historySearch" type="search" placeholder="Search description, category, or notes..." /></div>
+          <select id="historyType" aria-label="Transaction type"><option value="all">All transactions</option><option value="expense">Expenses only</option><option value="income">Income only</option></select>
+          <label class="history-date">From <input id="historyFrom" type="date" /></label>
+          <label class="history-date">To <input id="historyTo" type="date" /></label>
+        </section>
+        <div class="summary-grid history-summary">
+          <article class="summary-card"><div class="summary-top"><span>Total income</span><span class="card-icon green">＋</span></div><strong id="historyIncomeTotal">₹0.00</strong></article>
+          <article class="summary-card"><div class="summary-top"><span>Total expenses</span><span class="card-icon orange">↗</span></div><strong id="historyExpenseTotal">₹0.00</strong></article>
+          <article class="summary-card"><div class="summary-top"><span>Net cash flow</span><span class="card-icon purple">⇄</span></div><strong id="historyNetTotal">₹0.00</strong></article>
+        </div>
+        <section class="panel table-panel"><div class="panel-heading"><div><h3>All transactions <span id="historyCount" class="count-badge">0</span></h3><p class="muted">Newest records appear first.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>TYPE</th><th>DESCRIPTION</th><th>CATEGORY</th><th>DATE</th><th class="align-right">AMOUNT</th></tr></thead><tbody id="historyTableBody"></tbody></table></div>
+          <div id="historyEmpty" class="empty-state hidden"><div class="empty-icon">▤</div><strong>No transactions found</strong><p>Try changing your filters or add income and expenses first.</p></div>
+        </section>
+      </section>
+
+      <section id="profilePage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">STUDENT ACCOUNT</span><h1>My profile</h1><p class="muted">Manage the personal and student details linked to your account.</p></div></div>
+        <div class="profile-layout">
+          <section class="panel profile-card"><div class="profile-hero"><div class="profile-avatar" id="profileAvatar">U</div><div><h2 id="profileDisplayName">Student name</h2><p id="profileDisplayEmail" class="muted">student@nitw.ac.in</p><span id="profileVerificationBadge" class="verified-badge">● Demo verification complete</span></div></div>
+            <form id="profileForm" class="form-stack profile-form">
+              <div class="form-row"><label>Full name<input id="profileName" type="text" minlength="2" required /></label><label>Student ID / Roll number<input id="profileStudentId" type="text" maxlength="40" placeholder="Optional" /></label></div>
+              <div class="form-row"><label>Department / Branch<input id="profileDepartment" type="text" maxlength="80" placeholder="e.g. CSE" /></label><label>Year of study<select id="profileYear"><option value="">Select year</option><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option><option>Other</option></select></label></div>
+              <label>Contact number <span class="optional">(optional)</span><input id="profilePhone" type="tel" maxlength="20" placeholder="Contact number" /></label>
+              <label>Student email<input id="profileEmail" type="email" readonly /></label>
+              <div id="profileFormMessage" class="form-error" role="status"></div>
+              <div><button type="submit" class="btn btn-primary">Save profile</button></div>
+            </form>
+          </section>
+          <section class="panel profile-stats"><div class="panel-heading"><div><h3>Your account at a glance</h3><p class="muted">Only your own records are included.</p></div></div><div class="profile-stat-row"><span>Expense records</span><strong id="profileExpenseCount">0</strong></div><div class="profile-stat-row"><span>Income records</span><strong id="profileIncomeCount">0</strong></div><div class="profile-stat-row"><span>Budgets created</span><strong id="profileBudgetCount">0</strong></div><div class="module-note"><span>i</span><div><strong>Prototype account</strong><p>Profile and transaction data are saved in this browser. Server-backed accounts and verified email delivery will be added with the backend.</p></div></div></section>
+        </div>
+      </section>
+
+      <section id="categoriesPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">CATEGORY INSIGHTS</span><h1>Spending by category</h1><p class="muted">Choose a category to inspect its expenses, trends, and budget usage.</p></div></div>
+        <div class="category-insight-grid" id="categoriesGrid"></div>
+        <section class="panel category-detail-panel" id="categoryDetailPanel">
+          <div class="panel-heading"><div><h3 id="categoryDetailTitle">Choose a category</h3><p class="muted" id="categoryDetailSubtitle">Select any category above to see a detailed breakdown.</p></div><button class="text-btn" id="categoryViewExpensesBtn" type="button">View expenses →</button></div>
+          <div class="summary-grid category-detail-summary">
+            <article class="summary-card"><div class="summary-top"><span>Total spent</span><span class="card-icon orange">₹</span></div><strong id="categoryTotalSpent">₹0.00</strong><div class="summary-bottom"><span class="subtle">All recorded time</span></div></article>
+            <article class="summary-card"><div class="summary-top"><span>Transactions</span><span class="card-icon purple">▤</span></div><strong id="categoryTransactionCount">0</strong><div class="summary-bottom"><span class="subtle">Matching expenses</span></div></article>
+            <article class="summary-card"><div class="summary-top"><span>Average expense</span><span class="card-icon blue">⌁</span></div><strong id="categoryAverageSpent">₹0.00</strong><div class="summary-bottom"><span class="subtle">Per transaction</span></div></article>
+          </div>
+          <div class="category-detail-lower">
+            <div class="category-month-panel"><h4>Monthly spending</h4><div id="categoryMonthlyBars" class="category-monthly-bars"></div></div>
+            <div class="category-month-panel"><h4>Latest transactions</h4><div id="categoryRecentTransactions" class="transaction-list"></div><div id="categoryTransactionsEmpty" class="empty-state hidden"><strong>No expenses in this category yet</strong><p>Add an expense and choose this category to populate its insights.</p></div></div>
+          </div>
+          <div id="categoryBudgetInsight" class="category-budget-insight"></div>
+        </section>
+        <div class="module-note"><span>✓</span><div><strong>Category-wise drill-down</strong><p>Each category shows its total spend, transaction count, average transaction, month-by-month spending, recent expenses, and matching budget information.</p></div></div>
+      </section>
+      <section id="reportsPage" class="page hidden">
+        <div class="page-heading"><div><span class="eyebrow">PLANNED MODULE</span><h1>Reports & analytics</h1><p class="muted">A preview of the next stage of the project.</p></div></div>
+        <div class="report-preview panel"><div class="report-graphic">▥</div><h2>Turn records into insights.</h2><p class="muted">Advanced date-range reports, budgets and income-versus-expense analysis are planned for later modules.</p><div class="report-stats"><div><span>Expenses recorded</span><strong id="reportCount">0</strong></div><div><span>Total tracked</span><strong id="reportTotal">₹0.00</strong></div></div></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="expenseModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-heading"><div><span class="eyebrow">MODULE 2</span><h2 id="modalTitle">Add expense</h2><p class="muted">Enter the details for this transaction.</p></div><button id="closeModalBtn" class="icon-btn" aria-label="Close">×</button></div>
+      <form id="expenseForm">
+        <input id="editExpenseId" type="hidden" />
+        <label>Expense description<input id="expenseDescription" type="text" placeholder="e.g. Lunch with friends" maxlength="80" required /></label>
+        <div class="form-row"><label>Amount (₹)<input id="expenseAmount" type="number" min="0.01" step="0.01" placeholder="250.00" required /></label><label>Date<input id="expenseDate" type="date" required /></label></div>
+        <label>Category<select id="expenseCategory" required><option value="">Choose category</option><option>Food & Dining</option><option>Transport</option><option>Shopping</option><option>Education</option><option>Bills & Utilities</option><option>Health</option><option>Entertainment</option><option>Other</option></select></label>
+        <label>Notes <span class="optional">(optional)</span><textarea id="expenseNotes" rows="2" placeholder="Add a short note..."></textarea></label>
+        <div id="expenseFormError" class="form-error"></div>
+        <div class="modal-actions"><button type="button" id="cancelModalBtn" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary" id="saveExpenseBtn">Save expense</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="incomeModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-heading"><div><span class="eyebrow">MODULE 3</span><h2 id="incomeModalTitle">Add income</h2><p class="muted">Record money received.</p></div><button id="closeIncomeModalBtn" class="icon-btn" aria-label="Close">×</button></div>
+      <form id="incomeForm">
+        <input id="editIncomeId" type="hidden" />
+        <label>Income source<input id="incomeDescription" type="text" placeholder="e.g. Monthly pocket money" maxlength="80" required /></label>
+        <div class="form-row"><label>Amount (₹)<input id="incomeAmount" type="number" min="0.01" step="0.01" placeholder="5000.00" required /></label><label>Date received<input id="incomeDate" type="date" required /></label></div>
+        <label>Income category<select id="incomeCategory" required><option value="">Choose category</option><option>Pocket Money</option><option>Salary / Internship</option><option>Scholarship</option><option>Freelance</option><option>Gift</option><option>Interest / Investment</option><option>Other</option></select></label>
+        <label>Notes <span class="optional">(optional)</span><textarea id="incomeNotes" rows="2" placeholder="Add a short note..."></textarea></label>
+        <div id="incomeFormError" class="form-error"></div>
+        <div class="modal-actions"><button type="button" id="cancelIncomeModalBtn" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary" id="saveIncomeBtn">Save income</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="budgetModal" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-heading"><div><span class="eyebrow">MODULE 4</span><h2 id="budgetModalTitle">Set a budget</h2><p class="muted">Choose a category and monthly spending limit.</p></div><button id="closeBudgetModalBtn" class="icon-btn" aria-label="Close">×</button></div>
+      <form id="budgetForm">
+        <input id="editBudgetId" type="hidden" />
+        <label>Expense category<select id="budgetCategory" required><option value="">Choose category</option><option>Food & Dining</option><option>Transport</option><option>Shopping</option><option>Education</option><option>Bills & Utilities</option><option>Health</option><option>Entertainment</option><option>Other</option></select></label>
+        <div class="form-row"><label>Monthly limit (₹)<input id="budgetAmount" type="number" min="0.01" step="0.01" placeholder="3000.00" required /></label><label>Month<input id="budgetForMonth" type="month" required /></label></div>
+        <div id="budgetFormError" class="form-error"></div>
+        <div class="modal-actions"><button type="button" id="cancelBudgetModalBtn" class="btn btn-ghost">Cancel</button><button type="submit" class="btn btn-primary" id="saveBudgetBtn">Save budget</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
